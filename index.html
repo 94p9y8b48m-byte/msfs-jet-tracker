@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MSFS 2024 – Neue Jets für PS5</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:        #050a0f;
+      --surface:   #0b1622;
+      --card:      #0f1e2e;
+      --border:    #1a3a5c;
+      --accent:    #00c8ff;
+      --accent2:   #ff4f00;
+      --text:      #cce8ff;
+      --muted:     #4a7a9b;
+      --new-badge: #00ff9d;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Exo 2', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Animated grid background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,200,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,255,.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Radar sweep ── */
+    .radar {
+      position: fixed;
+      top: -300px; right: -300px;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, transparent 340deg, rgba(0,200,255,.08) 360deg);
+      animation: sweep 8s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+    @keyframes sweep { to { transform: rotate(360deg); } }
+
+    /* ── Header ── */
+    header {
+      position: relative;
+      z-index: 10;
+      padding: 2.5rem 2rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(0,200,255,.06) 0%, transparent 100%);
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+    }
+    .logo-icon {
+      font-size: 2.6rem;
+      filter: drop-shadow(0 0 12px var(--accent));
+      animation: pulse 3s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { filter: drop-shadow(0 0 10px var(--accent)); }
+      50%      { filter: drop-shadow(0 0 22px var(--accent)); }
+    }
+    h1 {
+      font-family: 'Orbitron', monospace;
+      font-weight: 900;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      letter-spacing: .08em;
+      line-height: 1.15;
+      color: #fff;
+    }
+    h1 span { color: var(--accent); }
+    .subtitle {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .78rem;
+      color: var(--muted);
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      margin-top: .3rem;
+    }
+    .ps5-badge {
+      margin-left: auto;
+      background: linear-gradient(135deg, #003791, #0070d1);
+      border: 1px solid #0070d1;
+      border-radius: 8px;
+      padding: .4rem .9rem;
+      font-family: 'Orbitron', monospace;
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      color: #fff;
+      box-shadow: 0 0 18px rgba(0,112,209,.4);
+    }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      position: relative;
+      z-index: 10;
+      max-width: 1100px;
+      margin: 1.5rem auto;
+      padding: 0 2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .6rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 120px;
+    }
+    .stat-value {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .stat-label {
+      font-size: .68rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      margin-top: .15rem;
+    }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      position: relative;
+      z-index: 10;
+      max-width: 1100px;
+      margin: 0 auto 2rem;
+      padding: 0 2rem;
+      display: flex;
+      gap: .7rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+    .filter-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: .35rem .85rem;
+      border-radius: 20px;
+      font-family: 'Exo 2', sans-serif;
+      font-size: .8rem;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(0,200,255,.08);
+      box-shadow: 0 0 10px rgba(0,200,255,.2);
+    }
+
+    /* ── Grid ── */
+    .grid {
+      position: relative;
+      z-index: 10;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.4rem;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: transform .25s, box-shadow .25s, border-color .25s;
+      animation: fadeInUp .5s ease both;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent);
+      box-shadow: 0 8px 40px rgba(0,200,255,.18);
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .card:nth-child(1) { animation-delay: .05s; }
+    .card:nth-child(2) { animation-delay: .10s; }
+    .card:nth-child(3) { animation-delay: .15s; }
+    .card:nth-child(4) { animation-delay: .20s; }
+    .card:nth-child(5) { animation-delay: .25s; }
+    .card:nth-child(6)  { animation-delay: .30s; }
+    .card:nth-child(7)  { animation-delay: .35s; }
+    .card:nth-child(8)  { animation-delay: .40s; }
+    .card:nth-child(9)  { animation-delay: .45s; }
+    .card:nth-child(10) { animation-delay: .50s; }
+    .card:nth-child(11) { animation-delay: .55s; }
+    .card:nth-child(12) { animation-delay: .60s; }
+
+    .card-banner {
+      height: 130px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-banner::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 40%, var(--card) 100%);
+    }
+
+    .card-body {
+      padding: 1rem 1.2rem 1.3rem;
+      transform: translateY(0);
+      transition: transform .35s ease;
+    }
+    .card:hover .card-body {
+      transform: translateY(12px);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: .6rem;
+    }
+
+    .jet-name {
+      font-family: 'Orbitron', monospace;
+      font-size: .95rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.3;
+    }
+
+    .badge {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .62rem;
+      letter-spacing: .1em;
+      padding: .22rem .55rem;
+      border-radius: 20px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      margin-left: .5rem;
+    }
+    .badge-new {
+      background: rgba(0,255,157,.15);
+      border: 1px solid var(--new-badge);
+      color: var(--new-badge);
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%,100% { box-shadow: 0 0 6px rgba(0,255,157,.4); }
+      50%      { box-shadow: 0 0 14px rgba(0,255,157,.8); }
+    }
+    .badge-recent {
+      background: rgba(0,200,255,.1);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+    .badge-dlc {
+      background: rgba(255,79,0,.1);
+      border: 1px solid var(--accent2);
+      color: var(--accent2);
+    }
+    .badge-paid {
+      background: rgba(255,0,60,.15);
+      border: 1px solid #ff003c;
+      color: #ff003c;
+      animation: blink-red 2s ease-in-out infinite;
+    }
+    @keyframes blink-red {
+      0%,100% { box-shadow: 0 0 6px rgba(255,0,60,.4); }
+      50%      { box-shadow: 0 0 14px rgba(255,0,60,.85); }
+    }
+
+    .jet-type {
+      font-size: .75rem;
+      color: var(--muted);
+      margin-bottom: .8rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+
+    .card-divider {
+      height: 1px;
+      background: var(--border);
+      margin-bottom: .8rem;
+    }
+
+    .card-meta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: .1rem;
+    }
+    .meta-key {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .6rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+    .meta-val {
+      font-size: .8rem;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* ── Section heading ── */
+    .section-heading {
+      position: relative;
+      z-index: 10;
+      max-width: 1100px;
+      margin: 0 auto 1rem;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+    }
+    .section-heading h2 {
+      font-family: 'Orbitron', monospace;
+      font-size: .85rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: .2em;
+    }
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--border), transparent);
+    }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .7rem;
+      color: var(--muted);
+      letter-spacing: .1em;
+    }
+
+    /* ── Add button ── */
+    .add-hint {
+      position: relative;
+      z-index: 10;
+      max-width: 1100px;
+      margin: 0 auto 2rem;
+      padding: 0 2rem;
+    }
+    .add-box {
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+      padding: 1.2rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: .8rem;
+      font-family: 'Share Tech Mono', monospace;
+      letter-spacing: .08em;
+    }
+    .add-box strong { color: var(--accent); }
+
+    /* hidden cards */
+    .card.hidden { display: none; }
+
+    /* ── Card clickable cursor ── */
+    .card[onclick] { cursor: pointer; }
+
+    /* ── Modal overlay ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.75);
+      backdrop-filter: blur(6px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .modal-overlay.open {
+      display: flex;
+      animation: fadeIn .2s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ── Modal box ── */
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--accent);
+      border-radius: 18px;
+      max-width: 620px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 0 60px rgba(0,200,255,.25);
+      animation: slideUp .25s ease;
+      position: relative;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    /* Modal image */
+    .modal-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 17px 17px 0 0;
+      display: block;
+    }
+
+    /* Modal close button */
+    .modal-close {
+      position: absolute;
+      top: .8rem;
+      right: .9rem;
+      background: rgba(0,0,0,.6);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 50%;
+      width: 2rem;
+      height: 2rem;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .2s;
+      z-index: 10;
+    }
+    .modal-close:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 10px rgba(0,200,255,.3);
+    }
+
+    /* Modal content */
+    .modal-content {
+      padding: 1.4rem 1.6rem 1.8rem;
+    }
+    .modal-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.2;
+      margin-bottom: .3rem;
+    }
+    .modal-subtitle {
+      font-size: .78rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      margin-bottom: 1.2rem;
+    }
+
+    /* Modal stats grid */
+    .modal-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .7rem;
+      margin-bottom: 1.2rem;
+    }
+    .modal-stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .6rem .9rem;
+    }
+    .modal-stat-key {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .6rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      margin-bottom: .2rem;
+    }
+    .modal-stat-val {
+      font-size: .85rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Modal divider */
+    .modal-divider {
+      height: 1px;
+      background: var(--border);
+      margin-bottom: 1rem;
+    }
+
+    /* Modal description */
+    .modal-desc {
+      font-size: .85rem;
+      color: var(--text);
+      line-height: 1.7;
+      opacity: .9;
+    }
+  </style>
+</head>
+<body>
+
+<div class="radar"></div>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-inner">
+    <div class="logo-icon">✈️</div>
+    <div>
+      <h1>MSFS 2024 <span>//</span> JET RELEASE TRACKER</h1>
+      <div class="subtitle">Tagesaktuelle Releases · PlayStation 5</div>
+    </div>
+    <div class="ps5-badge">PS5</div>
+  </div>
+</header>
+
+<!-- ── STATS ── -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-value" id="total-count">12</div>
+    <div class="stat-label">Jets gesamt</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value" id="new-count">0</div>
+    <div class="stat-label">Neu heute</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">21.05.2026</div>
+    <div class="stat-label">Letztes Update</div>
+  </div>
+</div>
+
+<!-- ── FILTER ── -->
+<div class="filter-bar">
+  <span class="filter-label">Filter:</span>
+  <button class="filter-btn active" onclick="filterCards('all', this)">Alle</button>
+  <button class="filter-btn" onclick="filterCards('neu', this)">🟢 Neu</button>
+  <button class="filter-btn" onclick="filterCards('kostenlos', this)">⚪ Kostenlos</button>
+  <button class="filter-btn" onclick="filterCards('kostenpflichtig', this)">🔴 Kostenpflichtig</button>
+</div>
+
+<!-- ── SECTION ── -->
+<div class="section-heading">
+  <h2>Aktuelle Releases</h2>
+  <div class="section-line"></div>
+</div>
+
+<!-- ── CARDS ── -->
+<div class="grid" id="jet-grid">
+
+  <!-- Karte 1: YF-23 – NEU -->
+  <div class="card" data-category="neu kostenpflichtig"
+    data-title="YF-23 Black Widow II"
+    data-subtitle="Experimenteller Tarnkappen-Jäger · USA"
+    data-speed="Mach 1.6 Supercruise (ohne NB)"
+    data-speedab="Mach 2.0+ (geschätzt)"
+    data-firstflight="26. August 1990"
+    data-unitcost="ca. $130–150 Mio. (Schätzung)"
+    data-marketprice="31,98€  (120 Simverse Coins)"
+    data-dev="Top Mach Studios"
+    data-release="19. Mai 2026"
+    data-desc="Der YF-23 war Northrop/McDonnell Douglas' Antwort auf die ATF-Ausschreibung der USAF. Er unterlag der YF-22 — die spätere F-22 Raptor — obwohl er als schneller und stealth-fähiger galt. Nur zwei Prototypen wurden gebaut, weshalb sich die Kosten von 130–150 Millionen USD an der F-22 Raptor orientieren. Zu Beginn des ATF-Projekts kalkulierte die USAF sowohl bei der YF-22 als auch der YF-23 mit 35–40 Millionen USD pro Stück. Die Höchstgeschwindigkeit mit Nachbrenner kann nur geschätzt werden da es nie veröffentlichte Dokumentationen über die Top Mach Geschwindigkeit gab. "
+    onclick="openModal(this)">
+    <div class="card-banner" style="background: linear-gradient(135deg,#0a1a2e,#1a0a2e); padding: 0;">
+      <img src="https://raw.githubusercontent.com/94p9y8b48m-byte/msfs-jet-tracker/refs/heads/main/Images/YF-23_BlackWidow_II.jpg" style="width:100%; height:100%; object-fit:cover; opacity:.85;" alt="YF-23 Black Widow II"/>
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">YF-23<br>Black Widow II</div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;align-items:flex-end;">
+          <span class="badge badge-new">✦ NEU</span>
+          <span class="badge badge-paid">✦ KOSTENPFLICHTIG</span>
+        </div>
+      </div>
+      <div class="jet-type">Experimenteller Tarnkappen-Jäger · USA</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">19. Mai 2026</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Entwicklerstudio</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">Top Mach Studios</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Karte 6: Avro 698 Vulcan -->
+  <div class="card" data-category="neu kostenpflichtig"
+    data-title="Avro 698 Vulcan"
+    data-subtitle="Strategischer Bomber · RAF"
+    data-speed="ca. 1.038 km/h (nahe Mach 0.96)"
+    data-speedab="Kein Nachbrenner"
+    data-firstflight="30. August 1952"
+    data-unitcost="ca. £11 Mio. (Schätzung, 1950er)"
+    data-marketprice="ca. 29,99 €"
+    data-dev="Just Flight"
+    data-release="19. Mai 2026"
+    data-desc="Die Avro Vulcan ist eine der bekanntesten britischen Militärmaschinen des Kalten Krieges. Als Deltabomber der V-Bomber-Flotte der RAF war sie Träger britischer Nuklearwaffen. Ihren größten Kampfeinsatz hatte sie im Falklandkrieg 1982 bei der Operation Black Buck – einem der längsten Bombereinsätze der Geschichte. Just Flight hat das Modell für MSFS 2020 und 2024 entwickelt und dafür eine echte Vulcan B Mk.2 am Wellesbourne Airfield vermessen."
+    onclick="openModal(this)">
+    <div class="card-banner" style="background: #050a0f; padding: 0;">
+      <img src="https://raw.githubusercontent.com/94p9y8b48m-byte/msfs-jet-tracker/refs/heads/main/Images/Avro_Vulcan_Bomber_RAF.JPEG" alt="Avro 698 Vulcan" style="width:100%;height:130px;object-fit:cover;display:block;" />
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">Avro 698 Vulcan<br><span style="font-size:.75rem;color:var(--muted);font-style:italic;">"B Mk. 2, K.2 &amp; MRR"</span></div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;align-items:flex-end;">
+          <span class="badge badge-new">✦ NEU</span>
+          <span class="badge badge-paid">✦ KOSTENPFLICHTIG</span>
+        </div>
+      </div>
+      <div class="jet-type">Strategischer Bomber · RAF</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">19. Mai 2026</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Entwicklerstudio</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">Just Flight</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Karte 11: Transall C-160 -->
+  <div class="card" data-category="neu kostenpflichtig"
+    data-title="Transall C-160"
+    data-subtitle="Militärisches Transportflugzeug · Bundeswehr / Armée de l'Air"
+    data-speed="ca. 593 km/h (Reisegeschwindigkeit)"
+    data-speedab="Kein Nachbrenner · Turboprop"
+    data-firstflight="25. Februar 1963"
+    data-unitcost="ca. 10–12 Mio. DM (Schätzung, 1960er)"
+    data-marketprice="37,97€ (140 Simverse Coins)" 
+    data-dev="AzurPoly"
+    data-release="19. Mai 2026"
+    data-desc="Die Transall C-160 ist ein franko-deutsches Transportflugzeug, das über ein Jahrzehnt als Rückgrat der Bundeswehr und der französischen Luftwaffe diente. Nach über einer Million Flugstunden wurde sie 2022 aus dem aktiven französischen Dienst entlassen. AzurPoly hat das Modell in enger Zusammenarbeit mit echten C-160-Piloten und dem Musée Européen de l'Aviation de Chasse in Montélimar entwickelt, wo eine ausgemusterte C-160R zugänglich war."
+    onclick="openModal(this)">
+    <div class="card-banner" style="background: #050a0f; padding: 0;">
+      <img src="https://raw.githubusercontent.com/94p9y8b48m-byte/msfs-jet-tracker/refs/heads/main/Images/Transall_C-160.jpeg" alt="Transall C-160" style="width:100%;height:130px;object-fit:cover;display:block;" />
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">Transall C-160</div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;align-items:flex-end;">
+          <span class="badge badge-new">✦ NEU</span>
+          <span class="badge badge-paid">✦ KOSTENPFLICHTIG</span>
+        </div>
+      </div>
+      <div class="jet-type">Militärisches Transportflugzeug · Bundeswehr / Armée de l'Air</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">19. Mai 2026</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Entwicklerstudio</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">Azurpoly</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Karte 8: SEPECAT Jaguar -->
+  <div class="card" data-category="neu kostenpflichtig"
+    data-title="SEPECAT Jaguar"
+    data-subtitle="Supersonischer Erdkampf-Jet · RAF / Armée de l'Air"
+    data-speed="ca. Mach 1.1 ohne Außenlasten"
+    data-speedab="Mach 1.6, mit NB"
+    data-firstflight="8. September 1968"
+    data-unitcost="ca. £3,5 Mio. (Schätzung, 1970er)"
+    data-marketprice="40,96€ (144 Simverse Coins)"
+    data-dev="Dassault / AzurPoly / JFEXP"
+    data-release="7. Mai 2026"
+    data-desc="Der SEPECAT Jaguar entstand als franko-britisches Gemeinschaftsprojekt und war das erste offiziell von Dassault lizenzierte Militärjet-Addon für MSFS – ein historischer Meilenstein. Er diente sowohl der RAF als auch der Armée de l'Air im Erdkampf und als Atomträger. Unter bestimmten Bedingungen konnte der Jaguar sogar ohne Nachbrenner kurzzeitig Überschallgeschwindigkeit erreichen. AzurPoly entwickelte das Modell auf Basis eines 3D-Scans mit Unterstützung ehemaliger Jaguar-Piloten. Mit 16 Lackierungen, einem maßgeschneiderten Soundpaket von Echo19 und einem vollanimierten Cockpit ist es eines der detailliertesten Militärjets für MSFS 2024."
+    onclick="openModal(this)">
+    <div class="card-banner" style="background: #050a0f; padding: 0;">
+      <img src="https://raw.githubusercontent.com/94p9y8b48m-byte/msfs-jet-tracker/refs/heads/main/Images/SEPECAT_Jaguar.jpg" alt="SEPECAT Jaguar" style="width:100%;height:130px;object-fit:cover;display:block;" />
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">SEPECAT Jaguar<br><span style="font-size:.75rem;color:var(--muted);font-style:italic;">"Jaguar"</span></div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;align-items:flex-end;">
+          <span class="badge badge-new">✦ NEU</span>
+          <span class="badge badge-paid">✦ KOSTENPFLICHTIG</span>
+        </div>
+      </div>
+      <div class="jet-type">Supersonischer Erdkampf-Jet · RAF / Armée de l'Air</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">7. Mai 2026</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Entwicklerstudio</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">Dassault / Azurpoly / JFEXP</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Karte 2: Lockheed A-12 Archangel -->
+  <div class="card" data-category="neu kostenpflichtig"
+    data-title="Lockheed A-12 Archangel"
+    data-subtitle="Aufklärungsflugzeug · CIA / USAF"
+    data-speed="Mach 3.2+ (Dauerbetrieb)"
+    data-speedab="Nachbrenner ab Reiseflug Pflicht"
+    data-firstflight="26. April 1962"
+    data-unitcost="ca. $34 Mio. (Schätzung, 1960er)"
+    data-marketprice="23,98€ (84 Simverse Coins)"
+    data-dev="KwikFlight"
+    data-release="7. Mai 2026"
+    data-desc="Die Lockheed A-12 war der direkte Vorgänger der berühmten SR-71 Blackbird und wurde für die CIA im Rahmen des streng geheimen OXCART-Programms entwickelt. Mit Mach 3.2+ war sie eines der schnellsten bemannten Flugzeuge aller Zeiten. Sie flog Aufklärungsmissionen über Nordvietnam und Nordkorea, bevor die SR-71 sie ablöste. Bis heute sind viele Details klassifiziert."
+    onclick="openModal(this)">
+    <div class="card-banner" style="background: #050a0f; padding: 0;">
+      <img src="https://raw.githubusercontent.com/94p9y8b48m-byte/msfs-jet-tracker/refs/heads/main/Images/A12-flying.jpg" alt="Lockheed A-12 Archangel" style="width:100%;height:130px;object-fit:cover;display:block;" />
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">Lockheed A-12<br><span style="font-size:.75rem;color:var(--muted);font-style:italic;">"Archangel"</span></div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;align-items:flex-end;">
+          <span class="badge badge-new">✦ NEU</span>
+          <span class="badge badge-paid">✦ KOSTENPFLICHTIG</span>
+        </div>
+      </div>
+      <div class="jet-type">Aufklärungsflugzeug · CIA / USAF</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">7. Mai 2026</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Entwicklerstudio</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">KwikFlight</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Karte 9: Northrop T-38A Talon -->
+  <div class="card" data-category="kostenpflichtig"
+    data-title="Northrop T-38A Talon"
+    data-subtitle="Überschall-Trainingsjet · USAF"
+    data-speed="nahe Mach 1.0"
+    data-speedab="ca. Mach 1.3"
+    data-firstflight="10. April 1959"
+    data-unitcost="ca. $1 Mio. (Schätzung, 1960er)"
+    data-marketprice="20,99€ (80 Simverse Coins)"
+    data-dev="Microsoft / Blackbird Simulations"
+    data-release="27. Januar 2026"
+    data-desc="Die T-38A Talon ist der weltweit erste Überschall-Trainingsjet und wurde von Northrop für die USAF entwickelt. Sie war das Ausbildungsflugzeug für ganze Generationen von US-Kampfpiloten und NASA-Astronauten. Northrop baute knapp 1.200 Exemplare zwischen 1961 und 1972. Diese Famous-Flyer-Version wurde von Blackbird Simulations für MSFS 2024 umgesetzt und fokussiert auf analoge Instrumente und klassisches Jet-Feeling."
+    onclick="openModal(this)">
+    <div class="card-banner" style="background: #050a0f; padding: 0;">
+      <img src="https://raw.githubusercontent.com/94p9y8b48m-byte/msfs-jet-tracker/refs/heads/main/Images/Northrop_T-38A_Talon%20.jpg" alt="Northrop T-38A Talon" style="width:100%;height:130px;object-fit:cover;display:block;" />
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">Northrop T-38A<br>Talon</div>
+        <span class="badge badge-paid">✦ KOSTENPFLICHTIG</span>
+      </div>
+      <div class="jet-type">Überschall-Trainingsjet · USAF</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">27. Januar 2026</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Entwicklerstudio</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">Microsoft / Blackbird Simulations</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Karte 2: F/A-18 Super Hornet -->
+  <div class="card" data-category="kostenlos"
+    data-title="F/A-18 Super Hornet"
+    data-subtitle="Mehrzweck-Kampfjet · US Navy"
+    data-speed="nahe Mach 1.0"
+    data-speedab="Mach 1.6 (Höchstgeschwindigkeit)"
+    data-firstflight="29. November 1995"
+    data-unitcost="ca. $67 Mio. (F/A-18E, Schätzung)"
+    data-marketprice="Kostenlos (Standardflugzeug)"
+    data-dev="Microsoft / Asobo"
+    data-release="Dezember 2025"
+    data-desc="Der F/A-18E Super Hornet ist das meistgenutzte Trägerflugzeug der US Navy und wurde als Weiterentwicklung des klassischen F/A-18 Hornet konzipiert. Er ist größer, schwerer und hat mehr Reichweite als sein Vorgänger. In MSFS 2024 ist er als kostenloses Standardflugzeug enthalten und bekannt aus Top Gun: Maverick. Das Modell wurde von Asobo Studio in Zusammenarbeit mit Microsoft entwickelt."
+    onclick="openModal(this)">
+    <div class="card-banner" style="background: linear-gradient(135deg,#0a1a0a,#0d2e1a); padding: 0;">
+      <img src="https://raw.githubusercontent.com/94p9y8b48m-byte/msfs-jet-tracker/refs/heads/main/Images/FA-18_Super_Hornet.jpg" style="width:100%; height:100%; object-fit:cover; opacity:.85;" alt="F/A-18 Super Hornet"/>
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">F/A-18<br>Super Hornet</div>
+        <span class="badge badge-recent">KOSTENLOS</span>
+      </div>
+      <div class="jet-type">Mehrzweck-Kampfjet · US Navy</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">Dezember 2025</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Standard</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">Microsoft / Asobo</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Karte 3: Republic A-10C Thunderbolt II -->
+  <div class="card" data-category="kostenlos"
+    data-title="Republic A-10C Thunderbolt II"
+    data-subtitle="Close Air Support · USAF"
+    data-speed="ca. 722 km/h (Höchstgeschwindigkeit)"
+    data-speedab="Kein Nachbrenner"
+    data-firstflight="10. Mai 1972"
+    data-unitcost="ca. $18,8 Mio. (Schätzung, 1970er)"
+    data-marketprice="Kostenlos (Standardflugzeug)"
+    data-dev="DC Designs"
+    data-release="Dezember 2025"
+    data-desc="Die A-10C Thunderbolt II, liebevoll 'Warthog' genannt, ist das wichtigste Close-Air-Support-Flugzeug der USAF und für ihre Überlebensfähigkeit im Tiefflug bekannt. Ihr Herzstück ist die 30-mm-GAU-8-Gatling-Kanone. DC Designs hat das Modell für MSFS 2024 entwickelt – nach über einem Jahr strikter Geheimhaltung, da Microsoft ihre Beteiligung erst kurz vor Release bekanntgab."
+    onclick="openModal(this)">
+    <div class="card-banner" style="background: linear-gradient(135deg,#1a1a0a,#2a2a0d); padding: 0;">
+      <img src="https://raw.githubusercontent.com/94p9y8b48m-byte/msfs-jet-tracker/refs/heads/main/Images/Republic_A-10_Thunderbolt_II.jpg" style="width:100%; height:100%; object-fit:cover; opacity:.85;" alt="Republic A-10C Thunderbolt II"/>
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">Republic A-10C<br>Thunderbolt II<br><span style="font-size:.75rem;color:var(--muted);font-style:italic;">"Warthog"</span></div>
+        <span class="badge badge-recent">KOSTENLOS</span>
+      </div>
+      <div class="jet-type">Close air support (CAS) · USAF</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">Dezember 2025</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Standard</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">DC Designs</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Karte 4: Airbus A400M -->
+  <div class="card" data-category="kostenlos"
+    data-title="Airbus A400M Atlas"
+    data-subtitle="Militärisches Transportflugzeug · NATO"
+    data-speed="ca. 780 km/h (Reisegeschwindigkeit)"
+    data-speedab="Kein Nachbrenner · Turboprop"
+    data-firstflight="11. Dezember 2009"
+    data-unitcost="ca. €120 Mio. (Schätzung)"
+    data-marketprice="Kostenlos (Standardflugzeug)"
+    data-dev="Microsoft / iniBuilds"
+    data-release="Dezember 2025"
+    data-desc="Der Airbus A400M Atlas ist das modernste Militärtransportflugzeug Europas und ersetzt bei der Bundeswehr, der französischen Luftwaffe und weiteren NATO-Partnern ältere Modelle wie die Transall C-160. Er vereint die Effizienz eines Turboprops mit Geschwindigkeiten nahe klassischer Transportjets und kann sowohl Lasten abwerfen als auch auf unbefestigten Pisten landen. iniBuilds hat das Modell für MSFS 2024 entwickelt."
+    onclick="openModal(this)">
+    <div class="card-banner" style="background: linear-gradient(135deg,#0d1a0d,#1a2a0a); padding: 0;">
+      <img src="https://raw.githubusercontent.com/94p9y8b48m-byte/msfs-jet-tracker/refs/heads/main/Images/Airbus_A400M_.jpg" alt="Airbus A400M" style="width:100%;height:130px;object-fit:cover;display:block;" />
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">Airbus A400M<br>Atlas</div>
+        <span class="badge badge-recent">KOSTENLOS</span>
+      </div>
+      <div class="jet-type">Militärisches Transportflugzeug · NATO</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">Dezember 2025</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Standard</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">Microsoft / iniBuilds</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <!-- Karte 7: Boom XB-1 -->
+  <div class="card" data-category="kostenlos"
+    data-title="Boom XB-1 Demonstrator"
+    data-subtitle="Supersonischer Technologie-Demonstrator"
+    data-speed="Mach 1.122 (Demonstrator-Limit)"
+    data-speedab="Ausgelegt auf Mach 2.2 (Overture)"
+    data-firstflight="22. März 2024"
+    data-unitcost="???!!!"
+    data-marketprice="Kostenlos (Standardflugzeug)"
+    data-dev="Microsoft / FlightFX"
+    data-release="Dezember 2025"
+    data-desc="Die Boom XB-1 ist ein 1/3-Scale-Demonstrator für das geplante Überschallpassagierflugzeug Boom Overture, das kommerziellen Transatlantikflug mit Mach 2.2 ermöglichen soll. Der echte XB-1-Erstflug fand im März 2024 statt und erreichte Schallgeschwindigkeit im Oktober 2024 – ein Meilenstein für die zivile Überschallluftfahrt. FlightFX hat das Modell als kostenloses Standardflugzeug für MSFS 2024 umgesetzt."
+    onclick="openModal(this)">
+    <div class="card-banner" style="background: #050a0f; padding: 0;">
+      <img src="https://raw.githubusercontent.com/94p9y8b48m-byte/msfs-jet-tracker/refs/heads/main/Images/Boom_XB-1.jpg" alt="Boom XB-1" style="width:100%;height:130px;object-fit:cover;display:block;" />
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">Boom XB-1<br><span style="font-size:.75rem;color:var(--muted);font-style:italic;">Demonstrator</span></div>
+        <span class="badge badge-recent">KOSTENLOS</span>
+      </div>
+      <div class="jet-type">Supersonischer Technologie-Demonstrator</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">Dezember 2025</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Standard</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">Microsoft / FlightFX</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <!-- Karte 10: Boeing C-17 Globemaster III -->
+  <div class="card" data-category="kostenpflichtig"
+    data-title="Boeing C-17 Globemaster III"
+    data-subtitle="Strategisches Militärtransportflugzeug · USAF"
+    data-speed="ca. 830 km/h (Reisegeschwindigkeit)"
+    data-speedab="Kein Nachbrenner"
+    data-firstflight="15. September 1991"
+    data-unitcost="ca. $218 Mio. (Schätzung)"
+    data-marketprice="20,99€ (80 Simverse Coins)"
+    data-dev="Microsoft / Miltech Simulations"
+    data-release="Dezember 2025"
+    data-desc="Die Boeing C-17 Globemaster III ist das wichtigste strategische Transportflugzeug der USAF und ihrer Verbündeten. Sie kann schwere Lasten interkontinental transportieren, auf kurzen Pisten landen und im Tiefflug Fracht abwerfen. Miltech Simulations hat das Modell für MSFS 2024 entwickelt – bekannt für detailgetreue Militärmodelle."
+    onclick="openModal(this)">
+    <div class="card-banner" style="background: #050a0f; padding: 0;">
+      <img src="https://raw.githubusercontent.com/94p9y8b48m-byte/msfs-jet-tracker/refs/heads/main/Images/C-17_Globemaster_III.jpg" alt="Boeing C-17 Globemaster III" style="width:100%;height:130px;object-fit:cover;display:block;" />
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">Boeing C-17<br>Globemaster III</div>
+        <span class="badge badge-paid">✦ KOSTENPFLICHTIG</span>
+      </div>
+      <div class="jet-type">Strategisches Militärtransportflugzeug · USAF</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">Dezember 2025</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Entwicklerstudio</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">Microsoft / Miltech Simulations</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <!-- Karte 12: Aero Vodochody L-39 Albatros -->
+  <div class="card" data-category="kostenlos"
+    data-title="Aero Vodochody L-39 Albatros"
+    data-subtitle="Militärischer Trainingsjet · Tschechoslowakei"
+    data-speed="ca. 750 km/h (Höchstgeschwindigkeit)"
+    data-speedab="Kein Nachbrenner"
+    data-firstflight="4. November 1968"
+    data-unitcost="ca. $2,5–3 Mio. (Schätzung, 1970er)"
+    data-marketprice="Kostenlos (Standardflugzeug)"
+    data-dev="Asobo Studios"
+    data-release="Dezember 2025"
+    data-desc="Die L-39 Albatros ist der meistverkaufte Militär-Trainingsjet der Geschichte und wurde von Aero Vodochody in der Tschechoslowakei entwickelt. Sie wurde von über 30 Luftstreitkräften weltweit eingesetzt und ist auch heute noch bei Kunstflugstaffeln beliebt. Ihre Einfachheit und Zuverlässigkeit machten sie zum Standard-Ausbildungsjet des Warschauer Pakts. Fun Fact: GTA V-Spielern könnte die L-39 auch als „Besra“ bekannt vorkommen."
+    onclick="openModal(this)">
+    <div class="card-banner" style="background: #050a0f; padding: 0;">
+      <img src="https://raw.githubusercontent.com/94p9y8b48m-byte/msfs-jet-tracker/refs/heads/main/Images/Aero_Vodochody_L-39_Albatros.jpg" alt="Aero Vodochody L-39 Albatros" style="width:100%;height:130px;object-fit:cover;display:block;" />
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">Aero Vodochody<br>L-39 Albatros</div>
+        <span class="badge badge-recent">KOSTENLOS</span>
+      </div>
+      <div class="jet-type">Militärischer Trainingsjet · Tschechoslowakei</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">Dezember 2025</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Entwicklerstudio</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">Asobo Studios</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ── MODAL ── -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOnOverlay(event)">
+  <div class="modal" id="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <img class="modal-img" id="modal-img" src="" alt=""/>
+    <div class="modal-content">
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-subtitle" id="modal-subtitle"></div>
+      <div class="modal-stats">
+        <div class="modal-stat">
+          <div class="modal-stat-key">Geschwindigkeit</div>
+          <div class="modal-stat-val" id="modal-speed"></div>
+        </div>
+        <div class="modal-stat">
+          <div class="modal-stat-key">Mit Nachbrenner</div>
+          <div class="modal-stat-val" id="modal-speedab"></div>
+        </div>
+        <div class="modal-stat">
+          <div class="modal-stat-key">Erstflug</div>
+          <div class="modal-stat-val" id="modal-firstflight"></div>
+        </div>
+        <div class="modal-stat">
+          <div class="modal-stat-key">Stückpreis (real)</div>
+          <div class="modal-stat-val" id="modal-unitcost"></div>
+        </div>
+        <div class="modal-stat">
+          <div class="modal-stat-key">Marketplace Preis</div>
+          <div class="modal-stat-val" id="modal-marketprice"></div>
+        </div>
+        <div class="modal-stat">
+          <div class="modal-stat-key">Entwickler Studio</div>
+          <div class="modal-stat-val" id="modal-dev"></div>
+        </div>
+      </div>
+      <div class="modal-divider"></div>
+      <div class="modal-desc" id="modal-desc"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  MSFS 2024 JET TRACKER · PS5 EDITION · Daten manuell gepflegt · Kein offizieller Microsoft-Dienst · Anregungen an: bsp@gmail.com
+</footer>
+
+<script>
+  function filterCards(category, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.card').forEach(card => {
+      const cats = card.dataset.category ? card.dataset.category.split(' ') : [];
+      if (category === 'all' || cats.includes(category)) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+  }
+
+  function openModal(el) {
+    const d = el.dataset;
+    document.getElementById('modal-title').textContent       = d.title       || '';
+    document.getElementById('modal-subtitle').textContent    = d.subtitle    || '';
+    document.getElementById('modal-speed').textContent       = d.speed       || '–';
+    document.getElementById('modal-speedab').textContent     = d.speedab     || '–';
+    document.getElementById('modal-firstflight').textContent = d.firstflight || '–';
+    document.getElementById('modal-unitcost').textContent    = d.unitcost    || '–';
+    document.getElementById('modal-marketprice').textContent = d.marketprice || '–';
+    document.getElementById('modal-dev').textContent         = d.dev         || '–';
+    document.getElementById('modal-desc').textContent        = d.desc        || '';
+    // Bild aus dem img-Tag der Karte holen
+    const img = el.querySelector('img');
+    document.getElementById('modal-img').src = img ? img.src : '';
+    document.getElementById('modal-img').alt = d.title || '';
+    document.getElementById('modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function closeModalOnOverlay(event) {
+    if (event.target === document.getElementById('modal-overlay')) closeModal();
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+
+</body>
+</html>
