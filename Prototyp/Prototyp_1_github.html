@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MSFS 2024 – Neue Jets für PS5</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:        #050a0f;
+      --surface:   #0b1622;
+      --card:      #0f1e2e;
+      --border:    #1a3a5c;
+      --accent:    #00c8ff;
+      --accent2:   #ff4f00;
+      --text:      #cce8ff;
+      --muted:     #4a7a9b;
+      --new-badge: #00ff9d;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Exo 2', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Animated grid background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,200,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,255,.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Radar sweep ── */
+    .radar {
+      position: fixed;
+      top: -300px; right: -300px;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, transparent 340deg, rgba(0,200,255,.08) 360deg);
+      animation: sweep 8s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+    @keyframes sweep { to { transform: rotate(360deg); } }
+
+    /* ── Header ── */
+    header {
+      position: relative;
+      z-index: 10;
+      padding: 2.5rem 2rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(0,200,255,.06) 0%, transparent 100%);
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+    }
+    .logo-icon {
+      font-size: 2.6rem;
+      filter: drop-shadow(0 0 12px var(--accent));
+      animation: pulse 3s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { filter: drop-shadow(0 0 10px var(--accent)); }
+      50%      { filter: drop-shadow(0 0 22px var(--accent)); }
+    }
+    h1 {
+      font-family: 'Orbitron', monospace;
+      font-weight: 900;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      letter-spacing: .08em;
+      line-height: 1.15;
+      color: #fff;
+    }
+    h1 span { color: var(--accent); }
+    .subtitle {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .78rem;
+      color: var(--muted);
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      margin-top: .3rem;
+    }
+    .ps5-badge {
+      margin-left: auto;
+      background: linear-gradient(135deg, #003791, #0070d1);
+      border: 1px solid #0070d1;
+      border-radius: 8px;
+      padding: .4rem .9rem;
+      font-family: 'Orbitron', monospace;
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      color: #fff;
+      box-shadow: 0 0 18px rgba(0,112,209,.4);
+    }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      position: relative;
+      z-index: 10;
+      max-width: 1100px;
+      margin: 1.5rem auto;
+      padding: 0 2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .6rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 120px;
+    }
+    .stat-value {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .stat-label {
+      font-size: .68rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      margin-top: .15rem;
+    }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      position: relative;
+      z-index: 10;
+      max-width: 1100px;
+      margin: 0 auto 2rem;
+      padding: 0 2rem;
+      display: flex;
+      gap: .7rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+    .filter-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: .35rem .85rem;
+      border-radius: 20px;
+      font-family: 'Exo 2', sans-serif;
+      font-size: .8rem;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(0,200,255,.08);
+      box-shadow: 0 0 10px rgba(0,200,255,.2);
+    }
+
+    /* ── Grid ── */
+    .grid {
+      position: relative;
+      z-index: 10;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.4rem;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: transform .25s, box-shadow .25s, border-color .25s;
+      animation: fadeInUp .5s ease both;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent);
+      box-shadow: 0 8px 40px rgba(0,200,255,.18);
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .card:nth-child(1) { animation-delay: .05s; }
+    .card:nth-child(2) { animation-delay: .10s; }
+    .card:nth-child(3) { animation-delay: .15s; }
+    .card:nth-child(4) { animation-delay: .20s; }
+    .card:nth-child(5) { animation-delay: .25s; }
+    .card:nth-child(6) { animation-delay: .30s; }
+
+    .card-banner {
+      height: 130px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-banner::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 40%, var(--card) 100%);
+    }
+
+    .card-body {
+      padding: 1rem 1.2rem 1.3rem;
+      transform: translateY(0);
+      transition: transform .35s ease;
+    }
+    .card:hover .card-body {
+      transform: translateY(12px);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: .6rem;
+    }
+
+    .jet-name {
+      font-family: 'Orbitron', monospace;
+      font-size: .95rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.3;
+    }
+
+    .badge {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .62rem;
+      letter-spacing: .1em;
+      padding: .22rem .55rem;
+      border-radius: 20px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      margin-left: .5rem;
+    }
+    .badge-new {
+      background: rgba(0,255,157,.15);
+      border: 1px solid var(--new-badge);
+      color: var(--new-badge);
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%,100% { box-shadow: 0 0 6px rgba(0,255,157,.4); }
+      50%      { box-shadow: 0 0 14px rgba(0,255,157,.8); }
+    }
+    .badge-recent {
+      background: rgba(0,200,255,.1);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+    .badge-dlc {
+      background: rgba(255,79,0,.1);
+      border: 1px solid var(--accent2);
+      color: var(--accent2);
+    }
+    .badge-paid {
+      background: rgba(255,0,60,.15);
+      border: 1px solid #ff003c;
+      color: #ff003c;
+      animation: blink-red 2s ease-in-out infinite;
+    }
+    @keyframes blink-red {
+      0%,100% { box-shadow: 0 0 6px rgba(255,0,60,.4); }
+      50%      { box-shadow: 0 0 14px rgba(255,0,60,.85); }
+    }
+
+    .jet-type {
+      font-size: .75rem;
+      color: var(--muted);
+      margin-bottom: .8rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+
+    .card-divider {
+      height: 1px;
+      background: var(--border);
+      margin-bottom: .8rem;
+    }
+
+    .card-meta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: .1rem;
+    }
+    .meta-key {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .6rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+    .meta-val {
+      font-size: .8rem;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* ── Section heading ── */
+    .section-heading {
+      position: relative;
+      z-index: 10;
+      max-width: 1100px;
+      margin: 0 auto 1rem;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+    }
+    .section-heading h2 {
+      font-family: 'Orbitron', monospace;
+      font-size: .85rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: .2em;
+    }
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--border), transparent);
+    }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .7rem;
+      color: var(--muted);
+      letter-spacing: .1em;
+    }
+
+    /* ── Add button ── */
+    .add-hint {
+      position: relative;
+      z-index: 10;
+      max-width: 1100px;
+      margin: 0 auto 2rem;
+      padding: 0 2rem;
+    }
+    .add-box {
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+      padding: 1.2rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: .8rem;
+      font-family: 'Share Tech Mono', monospace;
+      letter-spacing: .08em;
+    }
+    .add-box strong { color: var(--accent); }
+
+    /* hidden cards */
+    .card.hidden { display: none; }
+  </style>
+</head>
+<body>
+
+<div class="radar"></div>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-inner">
+    <div class="logo-icon">✈️</div>
+    <div>
+      <h1>MSFS 2024 <span>//</span> JET RELEASE TRACKER</h1>
+      <div class="subtitle">Tagesaktuelle Releases · PlayStation 5</div>
+    </div>
+    <div class="ps5-badge">PS5</div>
+  </div>
+</header>
+
+<!-- ── STATS ── -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-value" id="total-count">12</div>
+    <div class="stat-label">Jets gesamt</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value" id="new-count">0</div>
+    <div class="stat-label">Neu heute</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">21.05.2026</div>
+    <div class="stat-label">Letztes Update</div>
+  </div>
+</div>
+
+<!-- ── FILTER ── -->
+<div class="filter-bar">
+  <span class="filter-label">Filter:</span>
+  <button class="filter-btn active" onclick="filterCards('all', this)">Alle</button>
+  <button class="filter-btn" onclick="filterCards('neu', this)">🟢 Neu</button>
+  <button class="filter-btn" onclick="filterCards('kostenlos', this)">⚪ Kostenlos</button>
+  <button class="filter-btn" onclick="filterCards('kostenpflichtig', this)">🔴 Kostenpflichtig</button>
+</div>
+
+<!-- ── SECTION ── -->
+<div class="section-heading">
+  <h2>Aktuelle Releases</h2>
+  <div class="section-line"></div>
+</div>
+
+<!-- ── CARDS ── -->
+<div class="grid" id="jet-grid">
+
+  <!-- Karte 1: YF-23 – NEU -->
+  <div class="card" data-category="neu kostenpflichtig">
+    <div class="card-banner" style="background: linear-gradient(135deg,#0a1a2e,#1a0a2e); padding: 0;">
+      <img src="https://raw.githubusercontent.com/DEIN-USERNAME/msfs-jet-tracker/main/images/jet-01.jpg" style="width:100%; height:100%; object-fit:cover; opacity:.85;" alt="YF-23 Black Widow II"/>
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">YF-23<br>Black Widow II</div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;align-items:flex-end;">
+          <span class="badge badge-new">✦ NEU</span>
+          <span class="badge badge-paid">✦ KOSTENPFLICHTIG</span>
+        </div>
+      </div>
+      <div class="jet-type">Experimenteller Tarnkappen-Jäger · USA</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">19. Mai 2026</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Entwicklerstudio</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">Top Mach Studios</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Karte 6: Avro 698 Vulcan -->
+  <div class="card" data-category="neu kostenpflichtig">
+    <div class="card-banner" style="background: #050a0f; padding: 0;">
+      <img src="https://raw.githubusercontent.com/DEIN-USERNAME/msfs-jet-tracker/main/images/jet-02.jpg" alt="Avro 698 Vulcan" style="width:100%;height:130px;object-fit:cover;display:block;" />
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">Avro 698 Vulcan<br><span style="font-size:.75rem;color:var(--muted);font-style:italic;">"B Mk. 2, K.2 &amp; MRR"</span></div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;align-items:flex-end;">
+          <span class="badge badge-new">✦ NEU</span>
+          <span class="badge badge-paid">✦ KOSTENPFLICHTIG</span>
+        </div>
+      </div>
+      <div class="jet-type">Strategischer Bomber · RAF</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">19. Mai 2026</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Entwicklerstudio</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">Just Flight</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Karte 11: Transall C-160 -->
+  <div class="card" data-category="neu kostenpflichtig">
+    <div class="card-banner" style="background: #050a0f; padding: 0;">
+      <img src="https://raw.githubusercontent.com/DEIN-USERNAME/msfs-jet-tracker/main/images/jet-03.jpg" alt="Transall C-160" style="width:100%;height:130px;object-fit:cover;display:block;" />
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">Transall C-160</div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;align-items:flex-end;">
+          <span class="badge badge-new">✦ NEU</span>
+          <span class="badge badge-paid">✦ KOSTENPFLICHTIG</span>
+        </div>
+      </div>
+      <div class="jet-type">Militärisches Transportflugzeug · Bundeswehr / Armée de l'Air</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">19. Mai 2026</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Entwicklerstudio</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">Azurpoly</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Karte 8: SEPECAT Jaguar -->
+  <div class="card" data-category="neu kostenpflichtig">
+    <div class="card-banner" style="background: #050a0f; padding: 0;">
+      <img src="https://raw.githubusercontent.com/DEIN-USERNAME/msfs-jet-tracker/main/images/jet-04.jpg" alt="SEPECAT Jaguar" style="width:100%;height:130px;object-fit:cover;display:block;" />
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">SEPECAT Jaguar<br><span style="font-size:.75rem;color:var(--muted);font-style:italic;">"Jaguar"</span></div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;align-items:flex-end;">
+          <span class="badge badge-new">✦ NEU</span>
+          <span class="badge badge-paid">✦ KOSTENPFLICHTIG</span>
+        </div>
+      </div>
+      <div class="jet-type">Supersonischer Erdkampf-Jet · RAF / Armée de l'Air</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">7. Mai 2026</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Entwicklerstudio</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">Dassault / Azurpoly / JFEXP</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Karte 2: Lockheed A-12 Archangel -->
+  <div class="card" data-category="neu kostenpflichtig">
+    <div class="card-banner" style="background: #050a0f; padding: 0;">
+      <img src="https://raw.githubusercontent.com/DEIN-USERNAME/msfs-jet-tracker/main/images/jet-05.jpg" alt="Lockheed A-12 Archangel" style="width:100%;height:130px;object-fit:cover;display:block;" />
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">Lockheed A-12<br><span style="font-size:.75rem;color:var(--muted);font-style:italic;">"Archangel"</span></div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;align-items:flex-end;">
+          <span class="badge badge-new">✦ NEU</span>
+          <span class="badge badge-paid">✦ KOSTENPFLICHTIG</span>
+        </div>
+      </div>
+      <div class="jet-type">Aufklärungsflugzeug · CIA / USAF</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">7. Mai 2026</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Entwicklerstudio</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">KwikFlight</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Karte 9: Northrop T-38A Talon -->
+  <div class="card" data-category="kostenpflichtig">
+    <div class="card-banner" style="background: #050a0f; padding: 0;">
+      <img src="https://raw.githubusercontent.com/DEIN-USERNAME/msfs-jet-tracker/main/images/jet-06.jpg" alt="Northrop T-38A Talon" style="width:100%;height:130px;object-fit:cover;display:block;" />
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">Northrop T-38A<br>Talon</div>
+        <span class="badge badge-paid">✦ KOSTENPFLICHTIG</span>
+      </div>
+      <div class="jet-type">Überschall-Trainingsjet · USAF</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">27. Januar 2026</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Entwicklerstudio</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">Microsoft / Blackbird Simulations</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Karte 2: F/A-18 Super Hornet -->
+  <div class="card" data-category="kostenlos">
+    <div class="card-banner" style="background: linear-gradient(135deg,#0a1a0a,#0d2e1a); padding: 0;">
+      <img src="https://raw.githubusercontent.com/DEIN-USERNAME/msfs-jet-tracker/main/images/jet-07.jpg" style="width:100%; height:100%; object-fit:cover; opacity:.85;" alt="F/A-18 Super Hornet"/>
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">F/A-18<br>Super Hornet</div>
+        <span class="badge badge-recent">KOSTENLOS</span>
+      </div>
+      <div class="jet-type">Mehrzweck-Kampfjet · US Navy</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">Dezember 2025</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Standard</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">Microsoft / Asobo</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Karte 3: Republic A-10C Thunderbolt II -->
+  <div class="card" data-category="kostenlos">
+    <div class="card-banner" style="background: linear-gradient(135deg,#1a1a0a,#2a2a0d); padding: 0;">
+      <img src="https://raw.githubusercontent.com/DEIN-USERNAME/msfs-jet-tracker/main/images/jet-08.jpg" style="width:100%; height:100%; object-fit:cover; opacity:.85;" alt="Republic A-10C Thunderbolt II"/>
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">Republic A-10C<br>Thunderbolt II<br><span style="font-size:.75rem;color:var(--muted);font-style:italic;">"Warthog"</span></div>
+        <span class="badge badge-recent">KOSTENLOS</span>
+      </div>
+      <div class="jet-type">Close air support (CAS) · USAF</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">Dezember 2025</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Standard</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">DC Designs</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Karte 4: Airbus A400M -->
+  <div class="card" data-category="kostenlos">
+    <div class="card-banner" style="background: linear-gradient(135deg,#0d1a0d,#1a2a0a); padding: 0;">
+      <img src="https://raw.githubusercontent.com/DEIN-USERNAME/msfs-jet-tracker/main/images/jet-09.jpg" alt="Airbus A400M" style="width:100%;height:130px;object-fit:cover;display:block;" />
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">Airbus A400M<br>Atlas</div>
+        <span class="badge badge-recent">KOSTENLOS</span>
+      </div>
+      <div class="jet-type">Militärisches Transportflugzeug · NATO</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">Dezember 2025</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Standard</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">Microsoft / iniBuilds</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <!-- Karte 7: Boom XB-1 -->
+  <div class="card" data-category="kostenlos">
+    <div class="card-banner" style="background: #050a0f; padding: 0;">
+      <img src="https://raw.githubusercontent.com/DEIN-USERNAME/msfs-jet-tracker/main/images/jet-10.jpg" alt="Boom XB-1" style="width:100%;height:130px;object-fit:cover;display:block;" />
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">Boom XB-1<br><span style="font-size:.75rem;color:var(--muted);font-style:italic;">Demonstrator</span></div>
+        <span class="badge badge-recent">KOSTENLOS</span>
+      </div>
+      <div class="jet-type">Supersonischer Technologie-Demonstrator</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">Dezember 2025</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Standard</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">Microsoft / FlightFX</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <!-- Karte 10: Boeing C-17 Globemaster III -->
+  <div class="card" data-category="kostenpflichtig">
+    <div class="card-banner" style="background: #050a0f; padding: 0;">
+      <img src="https://raw.githubusercontent.com/DEIN-USERNAME/msfs-jet-tracker/main/images/jet-11.jpg" alt="Boeing C-17 Globemaster III" style="width:100%;height:130px;object-fit:cover;display:block;" />
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">Boeing C-17<br>Globemaster III</div>
+        <span class="badge badge-paid">✦ KOSTENPFLICHTIG</span>
+      </div>
+      <div class="jet-type">Strategisches Militärtransportflugzeug · USAF</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">Dezember 2025</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Entwicklerstudio</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">Microsoft / Miltech Simulations</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <!-- Karte 12: Aero Vodochody L-39 Albatros -->
+  <div class="card" data-category="kostenlos">
+    <div class="card-banner" style="background: #050a0f; padding: 0;">
+      <img src="https://raw.githubusercontent.com/DEIN-USERNAME/msfs-jet-tracker/main/images/jet-12.jpg" alt="Aero Vodochody L-39 Albatros" style="width:100%;height:130px;object-fit:cover;display:block;" />
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="jet-name">Aero Vodochody<br>L-39 Albatros</div>
+        <span class="badge badge-recent">KOSTENLOS</span>
+      </div>
+      <div class="jet-type">Militärischer Trainingsjet · Tschechoslowakei</div>
+      <div class="card-divider"></div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-key">Release</span>
+          <span class="meta-val">Dezember 2025</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-key">Typ</span>
+          <span class="meta-val">Entwicklerstudio</span>
+        </div>
+      </div>
+      <div class="card-meta" style="margin-top:.6rem">
+        <div class="meta-item">
+          <span class="meta-key">Entwickler</span>
+          <span class="meta-val">Asobo Studios</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div class="add-hint">
+  <div class="add-box">
+    ✦ Neuen Jet hinzufügen? Öffne diese Datei in einem Texteditor und kopiere einen <strong>&lt;div class="card"&gt;</strong>-Block. Anleitung auf Anfrage! ✦
+  </div>
+</div>
+
+<footer>
+  MSFS 2024 JET TRACKER · PS5 EDITION · Daten manuell gepflegt · Kein offizieller Microsoft-Dienst · Anregungen an: bsp@gmail.com
+</footer>
+
+<script>
+  function filterCards(category, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.card').forEach(card => {
+      const cats = card.dataset.category ? card.dataset.category.split(' ') : [];
+      if (category === 'all' || cats.includes(category)) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
