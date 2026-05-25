@@ -477,7 +477,9 @@
       max-width: 620px;
       width: 100%;
       max-height: 90vh;
-      overflow-y: auto;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
       box-shadow: 0 0 60px rgba(0,200,255,.25);
       animation: slideUp .25s ease;
       position: relative;
@@ -524,6 +526,11 @@
     /* Modal content */
     .modal-content {
       padding: 1.4rem 1.6rem 1.8rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow: hidden;
+      min-height: 0;
     }
     .modal-title {
       font-family: 'Orbitron', monospace;
@@ -547,6 +554,10 @@
       grid-template-columns: 1fr 1fr;
       gap: .7rem;
       margin-bottom: 1.2rem;
+      max-height: 240px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent) var(--surface);
     }
     .modal-stat {
       background: var(--surface);
@@ -581,6 +592,11 @@
       color: var(--text);
       line-height: 1.7;
       opacity: .9;
+      max-height: 150px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent) var(--surface);
+      padding-right: .3rem;
     }
   </style>
 </head>
@@ -644,7 +660,7 @@
 
   <!-- Karte 1: YF-23 – NEU -->
   <div class="card" data-category="neu kostenpflichtig"
-    data-title="YF-23 Black Widow II"
+    data-title="YF-23 Black Widow II" data-nickname="Black Widow YF23"
     data-subtitle="Experimenteller Tarnkappen-Jäger · USA"
     data-speed="Mach 1.6 Supercruise (ohne NB)"
     data-speedab="Mach 2.0+ (geschätzt)"
@@ -689,7 +705,7 @@
 
   <!-- Karte 6: Avro 698 Vulcan -->
   <div class="card" data-category="neu kostenpflichtig"
-    data-title="Avro 698 Vulcan"
+    data-title="Avro 698 Vulcan" data-nickname="Vulcan Bomber"
     data-subtitle="Strategischer Bomber · RAF"
     data-speed="ca. 1.038 km/h (nahe Mach 0.96)"
     data-speedab="Kein Nachbrenner"
@@ -734,7 +750,7 @@
 
   <!-- Karte 11: Transall C-160 -->
   <div class="card" data-category="neu kostenpflichtig"
-    data-title="Transall C-160"
+    data-title="Transall C-160" data-nickname="C160 Transall"
     data-subtitle="Militärisches Transportflugzeug · Bundeswehr / Armée de l'Air"
     data-speed="ca. 593 km/h (Reisegeschwindigkeit)"
     data-speedab="Kein Nachbrenner · Turboprop"
@@ -779,7 +795,7 @@
 
   <!-- Karte 8: SEPECAT Jaguar -->
   <div class="card" data-category="neu kostenpflichtig"
-    data-title="SEPECAT Jaguar"
+    data-title="SEPECAT Jaguar" data-nickname="Jaguar"
     data-subtitle="Supersonischer Erdkampf-Jet · RAF / Armée de l'Air"
     data-speed="ca. Mach 1.1 ohne Außenlasten"
     data-speedab="Mach 1.6, mit NB"
@@ -824,7 +840,7 @@
 
   <!-- Karte 2: Lockheed A-12 Archangel -->
   <div class="card" data-category="neu kostenpflichtig"
-    data-title="Lockheed A-12 Archangel"
+    data-title="Lockheed A-12 Archangel" data-nickname="Archangel A12 Oxcart"
     data-subtitle="Aufklärungsflugzeug · CIA / USAF"
     data-speed="Mach 3.2+ (Dauerbetrieb)"
     data-speedab="Nachbrenner ab Reiseflug Pflicht"
@@ -869,7 +885,7 @@
 
   <!-- Karte 9: Northrop T-38A Talon -->
   <div class="card" data-category="kostenpflichtig"
-    data-title="Northrop T-38A Talon"
+    data-title="Northrop T-38A Talon" data-nickname="Talon T38 T-38"
     data-subtitle="Überschall-Trainingsjet · USAF"
     data-speed="nahe Mach 1.0"
     data-speedab="ca. Mach 1.3"
@@ -911,7 +927,7 @@
 
   <!-- Karte 2: F/A-18 Super Hornet -->
   <div class="card" data-category="kostenlos"
-    data-title="F/A-18 Super Hornet"
+    data-title="F/A-18 Super Hornet" data-nickname="Rhino Hornet FA18 FA-18"
     data-subtitle="Mehrzweck-Kampfjet · US Navy"
     data-speed="nahe Mach 1.0"
     data-speedab="Mach 1.6 (Höchstgeschwindigkeit)"
@@ -953,7 +969,7 @@
 
   <!-- Karte 3: Republic A-10C Thunderbolt II -->
   <div class="card" data-category="kostenlos"
-    data-title="Republic A-10C Thunderbolt II"
+    data-title="Republic A-10C Thunderbolt II" data-nickname="Warthog Hog A10 A-10"
     data-subtitle="Close Air Support · USAF"
     data-speed="ca. 722 km/h (Höchstgeschwindigkeit)"
     data-speedab="Kein Nachbrenner"
@@ -996,7 +1012,7 @@
 
   <!-- Karte 4: Airbus A400M -->
   <div class="card" data-category="kostenlos"
-    data-title="Airbus A400M Atlas"
+    data-title="Airbus A400M Atlas" data-nickname="Atlas A400 A-400"
     data-subtitle="Militärisches Transportflugzeug · NATO"
     data-speed="ca. 780 km/h (Reisegeschwindigkeit)"
     data-speedab="Kein Nachbrenner · Turboprop"
@@ -1040,7 +1056,7 @@
 
   <!-- Karte 7: Boom XB-1 -->
   <div class="card" data-category="kostenlos"
-    data-title="Boom XB-1 Demonstrator"
+    data-title="Boom XB-1 Demonstrator" data-nickname="XB1 XB-1"
     data-subtitle="Supersonischer Technologie-Demonstrator"
     data-speed="Mach 1.122 (Demonstrator-Limit)"
     data-speedab="Ausgelegt auf Mach 2.2 (Overture)"
@@ -1084,7 +1100,7 @@
 
   <!-- Karte 10: Boeing C-17 Globemaster III -->
   <div class="card" data-category="kostenpflichtig"
-    data-title="Boeing C-17 Globemaster III"
+    data-title="Boeing C-17 Globemaster III" data-nickname="Globemaster C17 C-17"
     data-subtitle="Strategisches Militärtransportflugzeug · USAF"
     data-speed="ca. 830 km/h (Reisegeschwindigkeit)"
     data-speedab="Kein Nachbrenner"
@@ -1128,7 +1144,7 @@
 
   <!-- Karte 12: Aero Vodochody L-39 Albatros -->
   <div class="card" data-category="kostenlos"
-    data-title="Aero Vodochody L-39 Albatros"
+    data-title="Aero Vodochody L-39 Albatros" data-nickname="Albatros L39 L-39"
     data-subtitle="Militärischer Trainingsjet · Tschechoslowakei"
     data-speed="ca. 750 km/h (Höchstgeschwindigkeit)"
     data-speedab="Kein Nachbrenner"
@@ -1216,17 +1232,26 @@
 </footer>
 
 <script>
+  function normalizeStr(s) {
+    // remove hyphens, spaces, make lowercase for fuzzy matching
+    return s.toLowerCase().replace(/[-\s]/g, '');
+  }
+
   function searchCards(query) {
     const q = query.toLowerCase().trim();
+    const qNorm = normalizeStr(q);
     document.querySelectorAll('.card').forEach(card => {
       const title    = (card.dataset.title    || '').toLowerCase();
       const subtitle = (card.dataset.subtitle || '').toLowerCase();
       const dev      = (card.dataset.dev      || '').toLowerCase();
-      if (!q || title.includes(q) || subtitle.includes(q) || dev.includes(q)) {
-        card.classList.remove('hidden');
-      } else {
-        card.classList.add('hidden');
-      }
+      const nickname = (card.dataset.nickname || '').toLowerCase();
+      const titleNorm    = normalizeStr(title);
+      const subtitleNorm = normalizeStr(subtitle);
+      const nicknameNorm = normalizeStr(nickname);
+      const match = !q
+        || title.includes(q) || subtitle.includes(q) || dev.includes(q) || nickname.includes(q)
+        || titleNorm.includes(qNorm) || subtitleNorm.includes(qNorm) || nicknameNorm.includes(qNorm);
+      card.classList.toggle('hidden', !match);
     });
   }
 
