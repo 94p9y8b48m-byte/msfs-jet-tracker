@@ -70,9 +70,7 @@
       gap: 1.2rem;
       flex-wrap: wrap;
     }
-    .logo-icon {
-      font-size: 2.6rem;
-      filter: drop-shadow(0 0 12px var(--accent));
+    .logo-icon svg {
       animation: pulse 3s ease-in-out infinite;
     }
     @keyframes pulse {
@@ -222,6 +220,63 @@
       background: rgba(0,200,255,.08);
       box-shadow: 0 0 10px rgba(0,200,255,.2);
     }
+
+    /* ── Mode Switch (Jets / Hubschrauber) ── */
+    .mode-switch {
+      position: relative;
+      z-index: 10;
+      max-width: 1100px;
+      margin: 0 auto 1.6rem;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .mode-switch-inner {
+      display: flex;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: .25rem;
+      gap: .25rem;
+    }
+    .mode-btn {
+      display: flex;
+      align-items: center;
+      gap: .45rem;
+      padding: .45rem 1.1rem;
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Orbitron', monospace;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      cursor: pointer;
+      transition: all .25s;
+      white-space: nowrap;
+    }
+    .mode-btn .mode-icon { flex-shrink: 0; }
+    .mode-btn.active {
+      background: rgba(0,200,255,.12);
+      color: var(--accent);
+      box-shadow: 0 0 14px rgba(0,200,255,.25), inset 0 0 0 1px var(--accent);
+    }
+    .mode-btn:not(.active):hover {
+      color: var(--text);
+      background: rgba(255,255,255,.04);
+    }
+    .mode-divider {
+      width: 1px;
+      height: 1.4rem;
+      background: var(--border);
+      align-self: center;
+    }
+    /* Helicopter section (hidden by default) */
+    #heli-section { display: none; }
+    #heli-section.visible { display: block; }
+    #jet-section.hidden-section { display: none; }
 
     /* ── Grid ── */
     .grid {
@@ -607,7 +662,9 @@
 <!-- ── HEADER ── -->
 <header>
   <div class="header-inner">
-    <div class="logo-icon">✈️</div>
+    <div class="logo-icon">
+      <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 10px var(--accent))"><path d="M22 16.5L14 12l2-8-4 2.5L9 2 7.5 8 2 9.5 8 12 4 20l8-3 4 5 2-6 4-2z"/></svg>
+    </div>
     <div>
       <h1>MSFS 2024 <span>//</span> JET RELEASE TRACKER</h1>
       <div class="subtitle">Tagesaktuelle Releases · PlayStation 5</div>
@@ -636,7 +693,9 @@
 <div class="search-bar">
   <div class="search-wrapper">
     <input type="text" id="search-input" placeholder="Jet suchen..." oninput="searchCards(this.value)" onkeydown="if(event.key==='Enter')searchCards(this.value)" />
-    <button onclick="searchCards(document.getElementById('search-input').value)" title="Suchen">🔍</button>
+    <button onclick="searchCards(document.getElementById('search-input').value)" title="Suchen">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
+    </button>
   </div>
 </div>
 
@@ -644,19 +703,39 @@
 <div class="filter-bar">
   <span class="filter-label">Filter:</span>
   <button class="filter-btn active" onclick="filterCards('all', this)">Alle</button>
-  <button class="filter-btn" onclick="filterCards('neu', this)">🟢 Neu</button>
-  <button class="filter-btn" onclick="filterCards('kostenlos', this)">⚪ Kostenlos</button>
-  <button class="filter-btn" onclick="filterCards('kostenpflichtig', this)">🔴 Kostenpflichtig</button>
+  <button class="filter-btn" onclick="filterCards('neu', this)">
+    <svg width="9" height="9" viewBox="0 0 9 9" style="margin-right:.3rem;vertical-align:middle"><circle cx="4.5" cy="4.5" r="4.5" fill="#00ff9d"/></svg>Neu
+  </button>
+  <button class="filter-btn" onclick="filterCards('kostenlos', this)">
+    <svg width="9" height="9" viewBox="0 0 9 9" style="margin-right:.3rem;vertical-align:middle"><circle cx="4.5" cy="4.5" r="4.5" fill="#cce8ff"/></svg>Kostenlos
+  </button>
+  <button class="filter-btn" onclick="filterCards('kostenpflichtig', this)">
+    <svg width="9" height="9" viewBox="0 0 9 9" style="margin-right:.3rem;vertical-align:middle"><circle cx="4.5" cy="4.5" r="4.5" fill="#ff003c"/></svg>Kostenpflichtig
+  </button>
 </div>
 
-<!-- ── SECTION ── -->
-<div class="section-heading">
-  <h2>Aktuelle Releases</h2>
-  <div class="section-line"></div>
+<!-- ── MODE SWITCH ── -->
+<div class="mode-switch">
+  <div class="mode-switch-inner">
+    <button class="mode-btn active" id="btn-jets" onclick="switchMode('jets')">
+      <svg class="mode-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0 0 11.5 2 1.5 1.5 0 0 0 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
+      FLUGZEUGE
+    </button>
+    <div class="mode-divider"></div>
+    <button class="mode-btn" id="btn-heli" onclick="switchMode('heli')">
+      <svg class="mode-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 11h8V8.5L2 7V5h20v2l-9 1.5V11h8v2H3v-2zm5 3h8v1.5l2 3.5H6l2-3.5V14z"/></svg>
+      HUBSCHRAUBER
+    </button>
+  </div>
 </div>
 
-<!-- ── CARDS ── -->
-<div class="grid" id="jet-grid">
+<!-- ── JET SECTION ── -->
+<div id="jet-section">
+  <div class="section-heading">
+    <h2>Aktuelle Releases – Flugzeuge</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="grid" id="jet-grid">
 
   <!-- Karte 1: YF-23 – NEU -->
   <div class="card" data-category="neu kostenpflichtig"
@@ -1182,8 +1261,23 @@
     </div>
   </div>
 
-</div>
+  </div>
+</div><!-- end #jet-section -->
 
+<!-- ── HUBSCHRAUBER SECTION ── -->
+<div id="heli-section">
+  <div class="section-heading">
+    <h2>Aktuelle Releases – Hubschrauber</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="grid" id="heli-grid">
+    <!-- Hubschrauber-Karten kommen hier rein -->
+    <div style="grid-column:1/-1; text-align:center; padding:3rem 1rem; color:var(--muted); font-family:'Share Tech Mono',monospace; font-size:.85rem; letter-spacing:.1em; border:1px dashed var(--border); border-radius:14px;">
+      🚁 &nbsp; HUBSCHRAUBER-SEKTION IN VORBEREITUNG<br>
+      <span style="font-size:.72rem; margin-top:.6rem; display:block; opacity:.6;">Hier werden bald neue Hubschrauber-Releases für MSFS 2024 · PS5 gelistet.</span>
+    </div>
+  </div>
+</div>
 
 <!-- ── MODAL ── -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalOnOverlay(event)">
@@ -1292,6 +1386,31 @@
 
   function closeModalOnOverlay(event) {
     if (event.target === document.getElementById('modal-overlay')) closeModal();
+  }
+
+  function switchMode(mode) {
+    const jetSection = document.getElementById('jet-section');
+    const heliSection = document.getElementById('heli-section');
+    const btnJets = document.getElementById('btn-jets');
+    const btnHeli = document.getElementById('btn-heli');
+    const searchInput = document.getElementById('search-input');
+
+    if (mode === 'jets') {
+      jetSection.classList.remove('hidden-section');
+      heliSection.classList.remove('visible');
+      btnJets.classList.add('active');
+      btnHeli.classList.remove('active');
+      // reset search placeholder
+      if (searchInput) searchInput.placeholder = 'Jet suchen...';
+    } else {
+      jetSection.classList.add('hidden-section');
+      heliSection.classList.add('visible');
+      btnJets.classList.remove('active');
+      btnHeli.classList.add('active');
+      if (searchInput) searchInput.placeholder = 'Hubschrauber suchen...';
+    }
+    // clear search when switching
+    if (searchInput) { searchInput.value = ''; searchCards(''); }
   }
 
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
