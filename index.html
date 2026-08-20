@@ -677,7 +677,7 @@
 <div class="stats-bar">
   <div class="stat">
     <div class="stat-value" id="total-count">15</div>
-    <div class="stat-label">Jets gesamt</div>
+    <div class="stat-label" id="total-label">Flugzeuge gesamt</div>
   </div>
   <div class="stat">
     <div class="stat-value" id="new-count">3</div>
@@ -1453,18 +1453,18 @@
     data-speedab="315 km/h (VNE, Höchstgeschwindigkeit)"
     data-firstflight="08. Mai 1962"
     data-unitcost="ca. 23-25 Mio. € (Neubau)"
-    data-marketprice="ca. 34,99€"
-    data-dev="Miltech Simulations"
+    data-marketprice="Enthalten in Premium Deluxe Edition (MSFS 2024)"
+    data-dev="Microsoft / Blackbird Simulations"
     data-release="xxxxxx"
-    data-desc="Die Boeing CH-47D Chinook von Miltech Simulations ist das unangefochtene Schwergewicht unter den militärischen Transport- und Lastenhubschraubern im Microsoft Flight Simulator. Der legendäre Tandem-Rotor-Helikopter ist weltweit für seinen unverwechselbaren Sound – den sogenannten ‚Blade Slap‘ – und seine enorme Hebeleistung bekannt. Im Simulator liefert das Modell ein hochpräzises Tandem-Flugmodell samt AFCS-Autopilot, funktionierenden Winden für Außenlasten (Sling Loads) sowie ein interaktives EFB-Tablet zur Steuerung von Fracht und Truppen. Im Paket enthalten sind 16 detaillierte Militär-Lackierungen (u. a. US Army, RAF, Luftwaffe) sowie konsolengerechte Fracht- und Einsatz-Szenarien. Als hochqualitatives Payware-Add-on (35,99 €) richtet sich der Chinook an alle Sim-Piloten, die schwere Logistik- und Cargo-Einsätze auf höchstem Niveau fliegen wollen."
+    data-desc="Die Boeing CH-47D Chinook ist das unangefochtene Schwergewicht unter den militärischen Transport- und Lastenhubschraubern im Microsoft Flight Simulator. Der legendäre Tandem-Rotor-Helikopter ist weltweit für seinen unverwechselbaren Sound – den sogenannten ‚Blade Slap‘ – und seine enorme Hebeleistung bekannt. Die für MSFS 2024 offiziell von Microsoft mitveröffentlichte Version wurde von Blackbird Simulations entwickelt und ist fester Bestandteil der Premium Deluxe Edition – anders als reine Payware-Add-ons muss sie also nicht separat im Marketplace gekauft werden, sondern ist an den Besitz der entsprechenden Spieledition gekoppelt."
     onclick="openModal(this)">
     <div class="card-banner" style="background: #050a0f; padding: 0;">
       <img src="https://raw.githubusercontent.com/94p9y8b48m-byte/msfs-jet-tracker/refs/heads/main/Images/CH-47.JPG" alt="Boeing CH-47D Chinook" style="width:100%;height:130px;object-fit:cover;display:block;" />
     </div>
     <div class="card-body">
       <div class="card-top">
-        <div class="jet-name">Boeing CH-74D<br>Chinook<br><span style="font-size:.75rem;color:var(--muted);font-style:italic;">"Chinook"</span></div>
-        <span class="badge badge-recent">KOSTENPFLICHTIG</span>
+        <div class="jet-name">Boeing CH-47D<br>Chinook<br><span style="font-size:.75rem;color:var(--muted);font-style:italic;">"Chinook"</span></div>
+        <span class="badge badge-paid">✦ KOSTENPFLICHTIG</span>
       </div>
       <div class="jet-type">Trasnporthubschrauber</div>
       <div class="card-divider"></div>
@@ -1475,13 +1475,13 @@
         </div>
         <div class="meta-item">
           <span class="meta-key">Typ</span>
-          <span class="meta-val">Entwicklerstudio</span>
+          <span class="meta-val">Premium Deluxe Edition</span>
         </div>
       </div>
       <div class="card-meta" style="margin-top:.6rem">
         <div class="meta-item">
           <span class="meta-key">Entwickler</span>
-          <span class="meta-val">Miltech Simulations</span>
+          <span class="meta-val">Microsoft / Blackbird Simulations</span>
         </div>
       </div>
     </div>
@@ -1603,6 +1603,19 @@
     if (event.target === document.getElementById('modal-overlay')) closeModal();
   }
 
+  function updateStats(mode) {
+    const totalLabel = document.getElementById('total-label');
+    const totalCount = document.getElementById('total-count');
+    const newCount   = document.getElementById('new-count');
+    const gridId = mode === 'jets' ? 'jet-grid' : 'heli-grid';
+    const grid = document.getElementById(gridId);
+    const cards = grid ? Array.from(grid.querySelectorAll('.card')) : [];
+
+    totalLabel.textContent = mode === 'jets' ? 'Flugzeuge gesamt' : 'Hubschrauber gesamt';
+    totalCount.textContent = cards.length;
+    newCount.textContent = cards.filter(c => (c.dataset.category || '').split(' ').includes('neu')).length;
+  }
+
   function switchMode(mode) {
     const jetSection = document.getElementById('jet-section');
     const heliSection = document.getElementById('heli-section');
@@ -1626,9 +1639,11 @@
     }
     // clear search when switching
     if (searchInput) { searchInput.value = ''; searchCards(''); }
+    updateStats(mode);
   }
 
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+  updateStats('jets');
 </script>
 
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "1cac040a68f64c36b77d73888923f70d"}'></script><!-- End Cloudflare Web Analytics -->
